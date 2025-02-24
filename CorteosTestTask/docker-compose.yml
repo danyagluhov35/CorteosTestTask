@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    environment:
+      - DB_HOST=db
+    networks:
+      - app-network
+    depends_on:
+      - db
+    entrypoint: ["./wait-for-it.sh", "db:1433", "--", "dotnet", "CorteosTestTask.dll"]
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=MyPasswordIsVeryGood!(@112)!!
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
